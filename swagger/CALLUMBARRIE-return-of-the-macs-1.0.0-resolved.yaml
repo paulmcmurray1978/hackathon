@@ -1,0 +1,99 @@
+---
+openapi: 3.0.0
+info:
+  title: Return of the Macs SoD Activities
+  description: This is an API to match users with Side of Desk Activities
+  contact:
+    email: you@your-company.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+- url: https://virtserver.swaggerhub.com/CALLUMBARRIE/return-of-the-macs/1.0.0
+  description: SwaggerHub API Auto Mocking
+- url: https://7h647bgivh.execute-api.eu-west-1.amazonaws.com/dev
+  description: Side of Desk Activity API
+tags:
+- name: admins
+  description: Secured Admin-only calls
+- name: developers
+  description: Operations available to regular developers
+paths:
+  /user:
+    get:
+      tags:
+      - developers
+      summary: get a user
+      description: |
+        By passing in the appropriate options, you can search for
+        users in the system
+      operationId: getUser
+      parameters:
+      - name: userName
+        in: query
+        description: pass an optional userName to get specific user
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: user found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InventoryItem'
+        "400":
+          description: bad input parameter
+    post:
+      tags:
+      - admins
+      summary: adds a user
+      description: Adds a user to the system
+      operationId: addUser
+      requestBody:
+        description: Inventory item to add
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryItem'
+      responses:
+        "201":
+          description: user created
+        "400":
+          description: "invalid input, object invalid"
+        "409":
+          description: an existing item already exists
+components:
+  schemas:
+    InventoryItem:
+      required:
+      - email
+      - firstName
+      - id
+      - interests
+      - secondName
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        firstName:
+          type: string
+          example: Callum
+        secondName:
+          type: string
+          example: Barrie
+        email:
+          type: string
+          example: callum.barrie@accenture.com
+        interests:
+          type: array
+          items: {}
+        releaseDate:
+          type: string
+          format: date-time
